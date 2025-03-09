@@ -1,7 +1,3 @@
-Below is example documentation you can place in this repository’s main **README.md** to guide users through both **training** a model and **solving** argumentation problems using AFGCN. Adjust or expand any sections as needed.
-
----
-
 # AFGCN
 
 AFGCN is an approximate abstract argumentation solver based on a Graph Convolutional Network (GCN) architecture. The repository provides two major workflows:
