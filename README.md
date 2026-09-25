@@ -93,6 +93,21 @@ The solver will output **YES** or **NO** depending on the acceptance status of a
 
 ---
 
+## Input validation and component tests
+
+The solver's `p af N` parser ignores blank lines and full-line `#` comments,
+accepts whitespace-separated attacks, and preserves isolated arguments. Malformed
+headers, repeated headers and attacks outside the declared argument range raise
+`ValueError` with file context (and line numbers for malformed records).
+
+```bash
+python -m pip install pytest
+python -m pytest tests
+```
+
+Parsing is isolated in `Solver/af_input.py`, so these checks do not require the
+model dependencies. They cover input handling, not model accuracy or GPU execution.
+
 ## Additional Notes
 
 - **Paper**: A short LaTeX paper discussing AFGCN is in `Solver/paper/`.

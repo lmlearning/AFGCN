@@ -1,3 +1,8 @@
+if __package__:
+    from .af_input import read_af_input
+else:
+    from af_input import read_af_input
+
 import dgl
 import torch 
 import torch.nn as nn
@@ -82,33 +87,6 @@ class AFGCNModel(nn.Module):
         h = self.dropout(h)
         h = self.fc(h)
         return h.squeeze()  # Remove the last dimension
-
-def read_af_input(file_path):
-    with open(file_path, 'r') as f:
-        lines = f.readlines()
-
-    attacks = []
-    args = []
-
-    for line in lines:
-        # Ignore comment lines
-        if line.startswith('#'):
-            continue
-
-        # Split the line into parts
-        parts = line.split()
-
-        # If it's a p-line, extract the number of arguments and create args array
-        if parts[0] == 'p' and parts[1] == 'af':
-            num_args = int(parts[2])
-            args = list([str(s) for s in range(1, num_args + 1)])
-
-        # If it's an attack line, add the attack to the list of attacks
-        elif len(parts) == 2:
-            i, j = parts[0], parts[1]
-            attacks.append([i, j])
-
-    return args, attacks
 
 def graph_coloring(nx_G):
     coloring = nx.algorithms.coloring.greedy_color(nx_G, strategy='largest_first')
