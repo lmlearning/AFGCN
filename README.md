@@ -1,4 +1,4 @@
-# AFGCN
+# AFGCN: Graph Neural Networks for Abstract Argumentation
 
 AFGCN is an approximate abstract argumentation solver based on a Graph Convolutional Network (GCN) architecture. The repository provides two major workflows:
 
