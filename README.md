@@ -68,13 +68,13 @@ cd Solver
 where:
 
 - **`<problem>`**: The argumentation problem type, e.g., `DC-CO`, `DS-PR`, `DC-ST`, `DS-STG`, etc.
-- **`<file>`**: Path to the input file (in `.tgf`, `.apx`, or similarly specified format).
+- **`<file>`**: Path to an input file using a `p af N` header followed by numeric attack pairs, with argument IDs starting at 1. File extensions alone do not determine compatibility; the current solver parser does not accept arbitrary TGF or APX syntax.
 - **`<argument>`**: The query argument (for “decide credulously” or “decide skeptically” tasks).
 
 For example:
 
 ```bash
-./solver.sh -p DS-ST -f myAF.tgf -a 2
+./solver.sh -p DS-ST -f myAF.af -a 2
 ```
 
 The solver will output **YES** or **NO** depending on the acceptance status of argument 2 under the DS-ST (decide skeptically under the Stable semantics) approximation.
@@ -106,4 +106,4 @@ The solver will output **YES** or **NO** depending on the acceptance status of a
 
 Contributions, bug reports, or feature requests are welcome. Please see `LICENSE` for details, and open issues or pull requests for improvements.
 
-Enjoy experimenting with AFGCN—an approximate solver that leverages the power of GCNs in abstract argumentation!
+Related projects: [FastAFGCN](https://github.com/lmlearning/FastAFGCN) for quantized inference and [ExplainableArgGCN](https://github.com/lmlearning/ExplainableArgGCN) for explainability experiments.
