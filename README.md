@@ -31,29 +31,16 @@ pip install dglgo -f https://data.dgl.ai/wheels-test/repo.html
 
 AFGCN expects a dataset of argumentation frameworks in a suitable textual form (each file typically specifying the number of arguments and the directed attacks). You can download or clone the dataset from [lmlearning/AFGraphLib](https://github.com/lmlearning/AFGraphLib) (or your chosen path/dataset). Place or link these dataset files somewhere locally so they can be accessed by the training script.
 
-### 1.2 Usage
+### 1.2 Training entry point
 
-Inside the **`Training`** directory is `train.py`. This script shows how to train the GCN model on the dataset. You may edit or extend it to match your data’s location, batch sizes, or training hyperparameters. Example usage:
+[Training/train.py](Training/train.py) contains the training implementation. Its actual directory and model options are:
 
 ```bash
 cd Training
-python train.py \
-    --data_dir /path/to/AFGraphLib \
-    --epochs 50 \
-    --learning_rate 0.001 \
-    --out_dir ./checkpoints
+python train.py --training_dir /path/to/training_data --validation_dir /path/to/validation_data --checkpoint_dir ./checkpoints --model_type AFGCNModel
 ```
 
-*Arguments above are placeholders—update to match how `train.py` processes command-line options.*
-
-**Key points**:
-
-- **`--data_dir`**: Directory containing your argumentation framework data (the AFGraphLib, for example).
-- **`--epochs`**: Number of training epochs.
-- **`--learning_rate`**: Learning rate for the optimizer.
-- **`--out_dir`**: Where to store the trained `.pth` model checkpoints.
-
-After training, you should have new `.pth` files representing the trained models for different semantics.
+Use `python train.py --help` to inspect the supported switches after installing dependencies. Training also imports NetworkX, NumPy and the GEM HOPE embedding implementation in addition to PyTorch, DGL and scikit-learn. Supply compatible dependencies and datasets with the solution files expected by the loader. Epoch count and learning rate are configured in the script, not through `--epochs` or `--learning_rate` flags.
 
 ---
 
