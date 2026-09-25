@@ -3,6 +3,8 @@ if __package__:
 else:
     from af_input import read_af_input
 
+import os
+os.environ.setdefault("DGLBACKEND", "pytorch")
 import dgl
 import torch 
 import torch.nn as nn
@@ -13,12 +15,13 @@ import argparse
 from dgl.nn import GraphConv
 from sklearn.preprocessing import StandardScaler
 import json
-import os
 import sys
 
 BLANK  = 0
 IN     = 1
 OUT    = 2
+SUPPORTED_TASKS = ('DS-CO', 'DC-CO', 'DS-PR', 'DC-PR', 'DS-ST', 'DC-ST',
+                   'DS-SST', 'DC-SST', 'DS-STG', 'DC-STG', 'DS-ID')
 
 def solve(adj_matrix):
     
@@ -86,7 +89,7 @@ class AFGCNModel(nn.Module):
         h = F.relu(h)
         h = self.dropout(h)
         h = self.fc(h)
-        return h.squeeze()  # Remove the last dimension
+        return h.squeeze(-1)  # Preserve the node axis for one-argument graphs.
 
 def graph_coloring(nx_G):
     coloring = nx.algorithms.coloring.greedy_color(nx_G, strategy='largest_first')
@@ -136,6 +139,9 @@ def main(cmd_args):
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) 
     
     args, atts = read_af_input(cmd_args.filepath)
+    if cmd_args.argument not in args:
+        raise ValueError(f"argument {cmd_args.argument!r} is not declared in the framework")
+    torch.manual_seed(cmd_args.seed)
     nxg = nx.DiGraph()
     nxg.add_nodes_from(args)
     nxg.add_edges_from(atts)
@@ -177,7 +183,7 @@ def main(cmd_args):
             inputs_to_overwrite.copy_(features_tensor)
             outputs = net(graph, inputs)
             
-            predicted = (torch.sigmoid(outputs.squeeze()) > threshold).float()
+            predicted = (torch.sigmoid(outputs) > threshold).float()
 
             if predicted[arg_id] == True:
                 print("YES")
@@ -187,17 +193,22 @@ def main(cmd_args):
 
 # Define a function to load the model checkpoint and retrieve the associated loss
 def load_checkpoint(model, checkpoint_path):
-    checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
+    checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'), weights_only=True)
     model.load_state_dict(checkpoint['model_state_dict'])
+    model.eval()
     return checkpoint['epoch'], checkpoint['loss']
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--in_features', type=int, default=128 , help='number of input features')
-    parser.add_argument('--filepath', type=str, default='' , help='file')
-    parser.add_argument('--task', type=str, default='' , help='task')
-    parser.add_argument('--argument', type=str, default='' , help='argument')
+    parser.add_argument('--filepath', type=str, required=True, help='input file using p af N format')
+    parser.add_argument('--task', choices=SUPPORTED_TASKS, required=True, help='decision task')
+    parser.add_argument('--argument', type=str, required=True, help='declared argument identifier')
+    parser.add_argument('--seed', type=int, default=42, help='seed for random feature padding (default: 42)')
     parser.add_argument('--thresholds_file', type=str, default='thresholds.json', help='path to the thresholds JSON file')
 
     args = parser.parse_args()
-    main(args)
+    try:
+        main(args)
+    except (ValueError, OSError) as error:
+        parser.error(str(error))
