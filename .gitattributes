@@ -1,0 +1,2 @@
+# Keep the Bash adapter executable after Windows checkouts.
+*.sh text eol=lf

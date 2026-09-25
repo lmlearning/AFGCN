@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "Please cite this software and the associated paper where applicable."
+type: software
+title: "AFGCN: Neural Approximation for Abstract Argumentation"
+authors:
+  - family-names: Malmqvist
+    given-names: Lars
+repository-code: "https://github.com/lmlearning/AFGCN"
+url: "https://github.com/lmlearning/AFGCN"
+license: MIT
